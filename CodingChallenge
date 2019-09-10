@@ -1,0 +1,102 @@
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+#objective:
+#1. load database
+
+#a. for home ownership data
+#  create a class called loan to store information
+
+class Loan:
+      def __int__(self, *id, type, amount):
+          self.id = id
+          self.type = type
+          self.amount = amount
+
+#read ownership data and write it into an array
+
+loanInfo = []
+
+with open('home_ownership_data.csv', 'r') as csv_file:
+    csv_reader = csv.reader(csv_file)
+
+    next(csv_reader)
+
+    for line in csv_reader:
+        id = line[0]
+        type = line[1]
+        temp1 = Loan()
+        temp1.id=id
+        temp1.type=type
+        loanInfo.append(temp1)
+
+#do the same thing with the other file
+#need to add the correct amount with correct id
+with open('loan_data.csv','r') as csv_file:
+    csv_reader = csv.reader(csv_file)
+
+    next(csv_reader)
+    #create a function to pair the id with each amount
+    def CompareID(id, amount):
+        leng = len(loanInfo)
+        for x in range(0,leng):
+            if loanInfo[x].id == id: loanInfo[x].amount=amount
+
+    for line in csv_reader:
+        id = line[0]
+        amount = line[1]
+
+        CompareID(id,amount)
+
+
+
+#2. parse info (as above)
+
+
+#3. calculate the average loan amount for each of the home ownership
+#make a function to calculate the average of each different type
+
+def AverageType(type):
+    leng = len(loanInfo)
+    count = 0.0
+    tot = 0.0
+    for x in range(0,leng):
+        if loanInfo[x].type == type:
+            count = count +1
+            tot = tot + float(loanInfo[x].amount)
+
+    return tot/count
+
+#calculate the average as below
+
+AvgMor = AverageType("MORTGAGE")
+AvgOwn = AverageType("OWN")
+AvgRen = AverageType("RENT")
+
+
+#4. graphing
+
+#create label
+home_ownership = ['MORTGAGE', 'OWN', 'RENT']
+loan_amount = [AvgMor, AvgOwn, AvgRen]
+
+plt.title("Average Loan Amount per Home Ownership")
+
+plt.ylabel("Average Loan Amount ($)")
+
+
+ypos = np.arange(len(home_ownership))
+
+#erase the number on the x axis
+#put it in the form
+
+plt.xticks([])
+
+plt.bar(ypos, loan_amount)
+
+#make the form right under the bar chart
+
+the_table= plt.table(cellText=[home_ownership,loan_amount],
+                    loc='bottom',
+                    cellLoc='center')
+
